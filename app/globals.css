@@ -1,26 +1,154 @@
+@import url('https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@300;400;500;600&family=Noto+Sans+KR:wght@300;400;500;600;700&display=swap');
 @import "tailwindcss";
 
+/* ─── Design Tokens ─────────────────────────────────────────────────────────── */
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --bg:           #F7F6F3;     /* warm off-white */
+  --bg-card:      #FFFFFF;
+  --bg-subtle:    #F0EFE9;
+  --text-primary: #1A1917;
+  --text-secondary:#6B6560;
+  --text-muted:   #A09890;
+  --border:       #E4E2DC;
+  --border-dark:  #C8C4BC;
+  --accent:       #9B8B7A;     /* muted warm brown */
+  --accent-light: #EDE8E2;
+  --gold:         #BFA060;     /* refined muted gold */
+  --gold-light:   #E8D9B0;
+  --gold-bg:      #FAF4E6;
+  --overlay:      rgba(26, 25, 23, 0.45);
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-bg:            var(--bg);
+  --color-bg-card:       var(--bg-card);
+  --color-bg-subtle:     var(--bg-subtle);
+  --color-text-primary:  var(--text-primary);
+  --color-text-secondary:var(--text-secondary);
+  --color-text-muted:    var(--text-muted);
+  --color-border:        var(--border);
+  --color-accent:        var(--accent);
+  --color-gold:          var(--gold);
+  --font-serif: 'Noto Serif KR', serif;
+  --font-sans:  'Noto Sans KR', sans-serif;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background-color: var(--bg);
+  color: var(--text-primary);
+  font-family: 'Noto Sans KR', sans-serif;
+  min-height: 100vh;
+  min-height: 100dvh;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ─── Animations ─────────────────────────────────────────────────────────────── */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes subtlePulse {
+  0%, 100% { transform: scale(1); opacity: 0.6; }
+  50%       { transform: scale(1.08); opacity: 1; }
+}
+
+@keyframes goldGlow {
+  0%, 100% { box-shadow: 0 0 0 1px var(--gold), 0 0 20px rgba(191,160,96,0.15); }
+  50%       { box-shadow: 0 0 0 1px var(--gold), 0 0 40px rgba(191,160,96,0.3); }
+}
+
+@keyframes shimmer {
+  0%   { background-position: -200% center; }
+  100% { background-position:  200% center; }
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50%       { transform: translateY(-10px); }
+}
+
+@keyframes rippleOut {
+  0%   { transform: scale(0.6); opacity: 0.5; }
+  100% { transform: scale(3);   opacity: 0; }
+}
+
+/* ─── Utilities ──────────────────────────────────────────────────────────────── */
+.font-serif { font-family: 'Noto Serif KR', serif; }
+.font-sans  { font-family: 'Noto Sans KR', sans-serif; }
+
+.animate-fade-up     { animation: fadeUp 0.5s ease both; }
+.animate-float       { animation: float 4s ease-in-out infinite; }
+.animate-gold-glow   { animation: goldGlow 2.5s ease-in-out infinite; }
+.animate-subtle-pulse{ animation: subtlePulse 2s ease-in-out infinite; }
+
+.card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+}
+
+.card-hover {
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+.card-hover:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 32px rgba(26,25,23,0.08);
+}
+
+.gold-card {
+  background: var(--gold-bg);
+  border: 1.5px solid var(--gold);
+  animation: goldGlow 2.5s ease-in-out infinite;
+}
+
+.text-gold-shimmer {
+  background: linear-gradient(90deg, #BFA060 0%, #E8C97A 40%, #BFA060 60%, #9A7D45 100%);
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: shimmer 3s linear infinite;
+}
+
+.divider {
+  height: 1px;
+  background: var(--border);
+}
+
+.divider-gold {
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--gold), transparent);
+}
+
+/* Mobile-first container */
+.app-container {
+  max-width: 480px;
+  margin: 0 auto;
+  min-height: 100vh;
+  min-height: 100dvh;
+  position: relative;
+  background: var(--bg);
+}
+
+/* Scrollbar */
+::-webkit-scrollbar { width: 3px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--border-dark); border-radius: 2px; }
+
+::selection { background: var(--accent-light); color: var(--text-primary); }
+
+/* Tag pill */
+.tag {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 10px;
+  border-radius: 100px;
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.04em;
 }
