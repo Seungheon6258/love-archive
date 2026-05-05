@@ -22,7 +22,12 @@ export default function UploadButton({ category, onUploadComplete }: UploadButto
       setProgress(0);
       for (let i = 0; i < acceptedFiles.length; i++) {
         setProgress(Math.round(((i + 0.5) / acceptedFiles.length) * 100));
-        await uploadPhoto(acceptedFiles[i], category);
+        const result = await uploadPhoto(acceptedFiles[i], category);
+        if (!result) {
+          alert("업로드에 실패했습니다. (사진 용량이 너무 크거나 인터넷 연결 문제, 혹은 Supabase 설정 문제일 수 있습니다.)");
+          setUploading(false);
+          return;
+        }
         setProgress(Math.round(((i + 1) / acceptedFiles.length) * 100));
       }
       setUploading(false);
