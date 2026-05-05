@@ -7,7 +7,8 @@ let _supabase: SupabaseClient | null = null;
 function getClient(): SupabaseClient | null {
   if (_supabase) return _supabase;
   const rawUrl = (process.env.NEXT_PUBLIC_SUPABASE_URL ?? "").trim();
-  const url = rawUrl.replace(/[\/]+$/, ""); // Remove all trailing slashes
+  // If user accidentally copied the REST API URL, strip it to get the base project URL
+  const url = rawUrl.replace(/\/rest\/v1\/?$/, "").replace(/[\/]+$/, "");
   const key = (process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ?? "").trim();
   if (!url || !key || url === "your_supabase_project_url") return null;
   try {
