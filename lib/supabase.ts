@@ -202,12 +202,54 @@ export function getCoverPhoto(categoryId: number): string | null {
   return getCoverPhotos()[categoryId] ?? null;
 }
 
-export async function setCoverPhoto(categoryId: number, file: File): Promise<string> {
-  const base64 = await fileToBase64(file);
-  const covers = getCoverPhotos();
-  covers[categoryId] = base64;
-  if (typeof window !== "undefined") {
-    localStorage.setItem(COVERS_KEY, JSON.stringify(covers));
+export async function fetchCovers(): Promise<Record<number, string>> {
+  const sb = getClient();
+  if (!sb) return getCoverPhotos();
+
+  const { data, error } = await sb.from("letters").select("content").eq("id", "covers").single();
+  if (error || !data || !data.content) return getCoverPhotos();
+  try {
+    return JSON.parse(data.content);
+  } catch {
+    return getCoverPhotos();
   }
-  return base64;
+}
+
+export async function setCoverPhoto(categoryId: number, file: File): Promise<string> {
+  const sb = getClient();
+  if (!sb) {
+    const base64 = await fileToBase64(file);
+    const covers = getCoverPhotos();
+    covers[categoryId] = base64;
+    if (typeof window !== "undefined") {
+      localStorage.setItem(COVERS_KEY, JSON.stringify(covers));
+    }
+    return base64;
+  }
+
+  const extRaw = file.name.split(".").pop() || "jpg";
+  const ext = extRaw.replace(/[^a-zA-Z0-9]/g, "").toLowerCase() || "jpg";
+  const path = `cover-${categoryId}-${Date.now()}.${ext}`;
+  
+  const { error: uploadError } = await sb.storage.from(BUCKET).upload(path, file, {
+    contentType: file.type,
+    upsert: false,
+  });
+  if (uploadError) throw new Error("Cover Storage Error: " + uploadError.message);
+
+  const { data: urlData } = sb.storage.from(BUCKET).getPublicUrl(path);
+  const url = urlData.publicUrl;
+
+  const covers = await fetchCovers();
+  covers[categoryId] = url;
+
+  const { error: dbError } = await sb.from("letters").upsert({
+    id: "covers",
+    title: "covers",
+    content: JSON.stringify(covers),
+    author: "system",
+  });
+  if (dbError) throw new Error("Cover DB Error: " + dbError.message);
+
+  return url;
 }

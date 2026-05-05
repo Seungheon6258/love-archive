@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import CategoryCard from "@/components/dashboard/CategoryCard";
 import { CATEGORIES } from "@/lib/schema";
-import { getDayCount, getCoverPhotos, fetchPhotos } from "@/lib/supabase";
+import { getDayCount, fetchCovers, fetchPhotos } from "@/lib/supabase";
 
 const containerVariants = {
   hidden: {},
@@ -26,10 +26,11 @@ export default function DashboardPage() {
   useEffect(() => {
     setDayCount(getDayCount("2024-12-23"));
     // Load cover photos
-    const storedCovers = getCoverPhotos();
-    const coverMap: Record<number, string | null> = {};
-    CATEGORIES.forEach((c) => { coverMap[c.id] = storedCovers[c.id] ?? null; });
-    setCovers(coverMap);
+    fetchCovers().then((storedCovers) => {
+      const coverMap: Record<number, string | null> = {};
+      CATEGORIES.forEach((c) => { coverMap[c.id] = storedCovers[c.id] ?? null; });
+      setCovers(coverMap);
+    });
     // Load photo counts
     const counts: Record<number, number> = {};
     Promise.all(
