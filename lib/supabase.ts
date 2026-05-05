@@ -93,7 +93,10 @@ export async function uploadPhoto(
     contentType: file.type,
     upsert: false,
   });
-  if (uploadError) { console.error("[uploadPhoto storage]", uploadError); return null; }
+  if (uploadError) { 
+    console.error("[uploadPhoto storage]", uploadError); 
+    throw new Error("Storage Error: " + uploadError.message); 
+  }
 
   const { data: urlData } = sb.storage.from(BUCKET).getPublicUrl(path);
   const url = urlData.publicUrl;
@@ -104,7 +107,10 @@ export async function uploadPhoto(
     .select()
     .single();
 
-  if (dbError) { console.error("[uploadPhoto db]", dbError); return null; }
+  if (dbError) { 
+    console.error("[uploadPhoto db]", dbError); 
+    throw new Error("DB Error: " + dbError.message); 
+  }
   return {
     id: data.id,
     category: data.category,
