@@ -84,7 +84,7 @@ export default function PhotoGrid({ photos, loading, onDelete }: PhotoGridProps)
           <motion.div
             key={photo.id}
             className="relative overflow-hidden cursor-pointer group"
-            style={{ aspectRatio: "1", borderRadius: 12 }}
+            style={{ aspectRatio: "1", borderRadius: 12, background: "#111" }}
             variants={{
               hidden: { opacity: 0, scale: 0.9 },
               show: { opacity: 1, scale: 1, transition: { duration: 0.3, ease: "easeOut" } },
@@ -97,7 +97,7 @@ export default function PhotoGrid({ photos, loading, onDelete }: PhotoGridProps)
               src={photo.url}
               alt={photo.caption ?? "photo"}
               fill
-              className="object-cover"
+              className="object-contain"
               sizes="(max-width: 480px) 33vw, 160px"
               unoptimized={photo.url.startsWith("data:")}
             />

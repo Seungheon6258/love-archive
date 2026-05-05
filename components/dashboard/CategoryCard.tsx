@@ -45,7 +45,7 @@ export default function CategoryCard({
       className={`relative overflow-hidden rounded-2xl cursor-pointer ${
         isSpecial ? "gold-card animate-gold-glow" : "card"
       }`}
-      style={{ height: 120 }}
+      style={{ height: 160 }}
       whileHover={{ scale: 1.015, y: -1 }}
       whileTap={{ scale: 0.985 }}
       transition={{ type: "spring", stiffness: 400, damping: 30 }}
@@ -53,18 +53,35 @@ export default function CategoryCard({
       role="button"
       aria-label={`${category.label} 카테고리`}
     >
-      {/* Cover photo background */}
+      {/* Cover photo — right-side poster */}
       {coverUrl ? (
         <>
-          <Image
-            src={coverUrl}
-            alt="cover"
-            fill
-            className="object-cover"
-            sizes="480px"
-            unoptimized={coverUrl.startsWith("data:")}
+          {/* Left gradient bg */}
+          <div
+            className="absolute inset-0"
+            style={{
+              background: isSpecial
+                ? `linear-gradient(135deg, var(--gold-bg) 0%, var(--gold-light) 100%)`
+                : `linear-gradient(135deg, var(--bg-subtle) 0%, var(--accent-light) 100%)`,
+            }}
           />
-          <div className="absolute inset-0" style={{ background: "linear-gradient(to right, rgba(26,25,23,0.72) 0%, rgba(26,25,23,0.2) 60%, transparent 100%)" }} />
+          {/* Photo occupies right half, full height, not cropped */}
+          <div className="absolute right-0 top-0 bottom-0" style={{ width: "52%" }}>
+            <Image
+              src={coverUrl}
+              alt="cover"
+              fill
+              className="object-contain"
+              sizes="240px"
+              unoptimized={coverUrl.startsWith("data:")}
+              style={{ objectPosition: "center center" }}
+            />
+          </div>
+          {/* Fade mask so text side is clean */}
+          <div
+            className="absolute inset-0"
+            style={{ background: "linear-gradient(to right, var(--bg-subtle) 40%, transparent 80%)" }}
+          />
         </>
       ) : (
         /* No cover — subtle gradient placeholder */
@@ -84,21 +101,21 @@ export default function CategoryCard({
         <div>
           <p
             className={`font-serif text-xl font-medium tracking-tight leading-tight ${
-              isSpecial ? "text-gold-shimmer" : coverUrl ? "text-white" : ""
+              isSpecial ? "text-gold-shimmer" : ""
             }`}
-            style={!isSpecial && !coverUrl ? { color: "var(--text-primary)" } : undefined}
+            style={!isSpecial ? { color: "var(--text-primary)" } : undefined}
           >
             {category.label}
           </p>
           <p
             className="text-xs mt-1 font-sans tracking-wide"
-            style={{ color: coverUrl ? "rgba(255,255,255,0.7)" : isSpecial ? "var(--gold)" : "var(--text-muted)" }}
+            style={{ color: isSpecial ? "var(--gold)" : "var(--text-muted)" }}
           >
             {category.range}
           </p>
           <p
             className="text-xs mt-1 font-sans"
-            style={{ color: coverUrl ? "rgba(255,255,255,0.55)" : "var(--text-muted)" }}
+            style={{ color: "var(--text-muted)" }}
           >
             {photoCount > 0 ? `${photoCount} photos` : "No photos yet"}
           </p>
