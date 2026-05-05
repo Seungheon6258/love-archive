@@ -6,7 +6,8 @@ let _supabase: SupabaseClient | null = null;
 
 function getClient(): SupabaseClient | null {
   if (_supabase) return _supabase;
-  const url = process.env.NEXT_PUBLIC_SUPABASE_URL ?? "";
+  const rawUrl = process.env.NEXT_PUBLIC_SUPABASE_URL ?? "";
+  const url = rawUrl.replace(/\/$/, ""); // Remove trailing slash if user accidentally added it
   const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ?? "";
   if (!url || !key || url === "your_supabase_project_url") return null;
   try {
@@ -86,7 +87,8 @@ export async function uploadPhoto(
     return photo;
   }
 
-  const ext = file.name.split(".").pop() ?? "jpg";
+  const extRaw = file.name.split(".").pop() || "jpg";
+  const ext = extRaw.replace(/[^a-zA-Z0-9]/g, "").toLowerCase() || "jpg";
   const path = `cat${category}/${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`;
 
   const { error: uploadError } = await sb.storage.from(BUCKET).upload(path, file, {
