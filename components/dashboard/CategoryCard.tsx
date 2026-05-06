@@ -95,10 +95,10 @@ export default function CategoryCard({
         />
       )}
 
-      {/* Content overlay */}
-      <div className="relative z-10 h-full flex items-center justify-between px-5">
-        {/* Left: text */}
-        <div>
+      {/* Content overlay — takes only the left 48% so it doesn't overlap the photo */}
+      <div className="relative z-10 h-full flex items-center px-5" style={{ width: "48%" }}>
+        {/* Centered text block */}
+        <div className="w-full">
           <p
             className={`font-serif text-xl font-medium tracking-tight leading-tight ${
               isSpecial ? "text-gold-shimmer" : ""
@@ -120,37 +120,37 @@ export default function CategoryCard({
             {photoCount > 0 ? `${photoCount} photos` : "No photos yet"}
           </p>
         </div>
+      </div>
 
-        {/* Right: cover edit + arrow */}
-        <div className="flex items-center gap-2">
-          {/* Cover photo edit button */}
-          <motion.button
-            onClick={handleCoverClick}
-            className="w-8 h-8 rounded-full flex items-center justify-center text-xs"
-            style={{
-              background: coverUrl ? "rgba(255,255,255,0.15)" : "var(--bg-subtle)",
-              border: `1px solid ${coverUrl ? "rgba(255,255,255,0.3)" : "var(--border)"}`,
-              color: coverUrl ? "white" : "var(--text-muted)",
-            }}
-            whileHover={{ scale: 1.1 }}
-            whileTap={{ scale: 0.9 }}
-            title="커버 사진 변경"
-            aria-label="커버 사진 설정"
-          >
-            {uploading ? "…" : "📌"}
-          </motion.button>
+      {/* Buttons — absolute so they don't affect layout */}
+      <div className="absolute bottom-3 right-3 z-20 flex items-center gap-2">
+        {/* Cover photo edit button */}
+        <motion.button
+          onClick={handleCoverClick}
+          className="w-8 h-8 rounded-full flex items-center justify-center text-xs"
+          style={{
+            background: "var(--bg-subtle)",
+            border: `1px solid var(--border)`,
+            color: "var(--text-muted)",
+          }}
+          whileHover={{ scale: 1.1 }}
+          whileTap={{ scale: 0.9 }}
+          title="커버 사진 변경"
+          aria-label="커버 사진 설정"
+        >
+          {uploading ? "…" : "📌"}
+        </motion.button>
 
-          {/* Arrow */}
-          <div
-            className="w-8 h-8 rounded-full flex items-center justify-center"
-            style={{
-              background: isSpecial ? "rgba(191,160,96,0.2)" : coverUrl ? "rgba(255,255,255,0.15)" : "var(--bg-subtle)",
-              color: isSpecial ? "var(--gold)" : coverUrl ? "white" : "var(--text-muted)",
-              fontSize: 16,
-            }}
-          >
-            →
-          </div>
+        {/* Arrow */}
+        <div
+          className="w-8 h-8 rounded-full flex items-center justify-center"
+          style={{
+            background: isSpecial ? "rgba(191,160,96,0.2)" : "var(--bg-subtle)",
+            color: isSpecial ? "var(--gold)" : "var(--text-muted)",
+            fontSize: 16,
+          }}
+        >
+          →
         </div>
       </div>
 

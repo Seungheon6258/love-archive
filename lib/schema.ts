@@ -35,7 +35,7 @@ export interface CategoryConfig {
 }
 
 export const CATEGORIES: CategoryConfig[] = [
-  { id: 1, label: "~ 100 days",     range: "Day 1 – 100",   emoji: "①", isSpecial: false, color: "#9B8B7A" },
+  { id: 1, label: "~ 100 days",     range: "Day 0 – 100",   emoji: "①", isSpecial: false, color: "#9B8B7A" },
   { id: 2, label: "101 ~ 200 days", range: "Day 101 – 200", emoji: "②", isSpecial: false, color: "#8B7B6A" },
   { id: 3, label: "201 ~ 300 days", range: "Day 201 – 300", emoji: "③", isSpecial: false, color: "#7B6B5A" },
   { id: 4, label: "301 ~ 400 days", range: "Day 301 – 400", emoji: "④", isSpecial: false, color: "#6B5B4A" },

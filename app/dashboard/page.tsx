@@ -46,29 +46,29 @@ export default function DashboardPage() {
     <div className="min-h-screen flex flex-col" style={{ background: "var(--bg)" }}>
       {/* Header */}
       <motion.header
-        className="px-5 pt-16 pb-32"
+        className="px-5 pt-16 pb-32 relative"
         initial={{ opacity: 0, y: -10 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
       >
-        <div className="flex items-end justify-between">
-          <div>
-            <p className="font-sans text-xs tracking-widest uppercase mb-3" style={{ color: "var(--text-muted)" }}>
-              our memories
-            </p>
-            <h1 className="font-serif text-4xl font-light" style={{ color: "var(--text-primary)", letterSpacing: "-0.5px" }}>
-              승헌 ♥ 지원
-            </h1>
-          </div>
-          <motion.button
-            onClick={() => router.push("/")}
-            className="w-8 h-8 flex items-center justify-center rounded-full"
-            style={{ border: "1px solid var(--border)", color: "var(--text-muted)" }}
-            whileTap={{ scale: 0.9 }}
-            aria-label="인트로로"
-          >
-            ←
-          </motion.button>
+        {/* Back button — absolute so it doesn't affect centering */}
+        <motion.button
+          onClick={() => router.push("/")}
+          className="absolute top-14 right-5 w-8 h-8 flex items-center justify-center rounded-full"
+          style={{ border: "1px solid var(--border)", color: "var(--text-muted)" }}
+          whileTap={{ scale: 0.9 }}
+          aria-label="인트로로"
+        >
+          ←
+        </motion.button>
+        {/* Centered title */}
+        <div className="text-center">
+          <p className="font-sans text-xs tracking-widest uppercase mb-3" style={{ color: "var(--text-muted)" }}>
+            our memories
+          </p>
+          <h1 className="font-serif text-4xl font-light" style={{ color: "var(--text-primary)", letterSpacing: "-0.5px" }}>
+            승헌 ♥ 지원
+          </h1>
         </div>
       </motion.header>
 
