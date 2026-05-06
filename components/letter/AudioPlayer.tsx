@@ -30,23 +30,8 @@ export default function AudioPlayer() {
   }, [isAudioPlaying]);
 
   return (
-    <>
-      <audio ref={audioRef} loop preload="none">
-        <source src="/music/letter-bgm.mp3" type="audio/mpeg" />
-      </audio>
-      <button
-        onClick={() => setAudioPlaying(!isAudioPlaying)}
-        className="fixed bottom-6 right-4 z-40 w-10 h-10 rounded-full flex items-center justify-center text-sm"
-        style={{
-          background: "var(--bg-card)",
-          border: "1px solid var(--border)",
-          color: "var(--text-secondary)",
-          boxShadow: "0 2px 12px rgba(26,25,23,0.08)",
-        }}
-        aria-label={isAudioPlaying ? "Pause music" : "Play music"}
-      >
-        {isAudioPlaying ? "⏸" : "▶"}
-      </button>
-    </>
+    <audio ref={audioRef} loop preload="none">
+      <source src="/music/letter-bgm.mp3" type="audio/mpeg" />
+    </audio>
   );
 }

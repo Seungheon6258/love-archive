@@ -22,12 +22,13 @@ export default function LetterReveal({ letter: initialLetter }: LetterRevealProp
 
   const handleEnvelopeClick = () => {
     if (phase !== "closed") return;
+    // Step 1: open flap + letter rises
     setPhase("opening");
-    // After flap opens + letter rises, show reading overlay
+    // Step 2: after letter has fully risen, show reading modal
     setTimeout(() => {
       setPhase("reading");
       setAudioPlaying(true);
-    }, 1000);
+    }, 1100);
   };
 
   const handleClose = () => {
@@ -40,58 +41,72 @@ export default function LetterReveal({ letter: initialLetter }: LetterRevealProp
 
   return (
     <>
-      {/* Envelope section — centered, no "A letter" label */}
+      {/* Envelope card — centered */}
       <div className="mb-6">
         <div
-          className="rounded-2xl p-8 flex flex-col items-center relative overflow-hidden"
+          className="rounded-2xl p-8 flex flex-col items-center relative overflow-visible"
           style={{ background: "var(--bg-subtle)", border: "1px solid var(--border)" }}
         >
           <p className="font-sans text-xs tracking-widest uppercase mb-6" style={{ color: "var(--text-muted)" }}>
             Day 500
           </p>
 
-          {/* Envelope + rising letter container */}
-          <div className="relative flex items-center justify-center" style={{ height: 120 }}>
-            {/* Letter peeking out of envelope during "opening" phase */}
-            <AnimatePresence>
-              {(phase === "opening") && (
-                <motion.div
-                  className="absolute rounded-sm shadow-md z-10"
-                  style={{
-                    width: 100,
-                    height: 70,
-                    background: "linear-gradient(to bottom, #FFF, #FAF8F5)",
-                    border: "1px solid #E0DCD3",
-                    bottom: 20,
-                    left: "50%",
-                    x: "-50%",
-                  }}
-                  initial={{ y: 0, opacity: 0.7 }}
-                  animate={{ y: -60, opacity: 1 }}
-                  exit={{ y: 0, opacity: 0 }}
-                  transition={{ duration: 0.7, ease: [0.25, 0.46, 0.45, 0.94] }}
-                >
-                  {/* Ruled lines on peeking letter */}
-                  {[18, 30, 42, 54].map((top) => (
-                    <div
-                      key={top}
-                      className="absolute left-4 right-4"
-                      style={{ top, height: 1, background: "#E8E5DF" }}
-                    />
-                  ))}
-                </motion.div>
-              )}
-            </AnimatePresence>
+          {/*
+            Layered envelope + letter:
+            - outermost div is the bounding box (overflow visible so letter can peek up)
+            - letter paper sits BEHIND envelope at z-index 5
+            - envelope sits at z-index 10 (on top, hiding the letter)
+            - when flap opens, letter animates upward, emerging above envelope body
+          */}
+          <div className="relative flex items-center justify-center" style={{ width: 140, height: 90, marginBottom: 32 }}>
 
-            {/* Envelope */}
-            <div className="relative z-20">
+            {/* Letter paper — behind the envelope, rises upward when opening */}
+            <motion.div
+              className="absolute rounded-sm"
+              style={{
+                width: 108,
+                height: 80,
+                background: "linear-gradient(to bottom, #FFFDF9, #FAF8F3)",
+                border: "1px solid #DDD9D0",
+                boxShadow: "0 2px 8px rgba(0,0,0,0.08)",
+                zIndex: 5,
+                bottom: 0,
+                left: "50%",
+                x: "-50%",
+              }}
+              animate={
+                phase === "opening" || phase === "reading"
+                  ? { y: -90, opacity: 1 }
+                  : { y: 0, opacity: 0.6 }
+              }
+              transition={{ duration: 0.7, ease: [0.25, 0.46, 0.45, 0.94] }}
+            >
+              {/* Ruled lines on letter paper */}
+              {[14, 26, 38, 50, 62].map((top) => (
+                <div
+                  key={top}
+                  className="absolute left-3 right-3"
+                  style={{ top, height: 1, background: "#EAE7E0" }}
+                />
+              ))}
+              {/* Small heart stamp */}
+              <div
+                className="absolute bottom-2 right-3 text-xs"
+                style={{ color: "#C9A0A0", fontSize: 10 }}
+              >
+                ♥
+              </div>
+            </motion.div>
+
+            {/* Envelope — on top of letter (z-index 10) */}
+            <div className="absolute bottom-0 left-0 right-0" style={{ zIndex: 10 }}>
               <EnvelopeIcon isOpen={phase !== "closed"} onClick={handleEnvelopeClick} />
             </div>
           </div>
 
           {/* Hint text */}
           <motion.p
-            className="font-sans text-xs text-center mt-5"
+            className="font-sans text-xs text-center"
             style={{ color: "var(--text-muted)" }}
             animate={phase === "closed" ? { opacity: [0.4, 0.9, 0.4] } : { opacity: 0 }}
             transition={{ duration: 2.5, repeat: phase === "closed" ? Infinity : 0 }}
@@ -101,11 +116,11 @@ export default function LetterReveal({ letter: initialLetter }: LetterRevealProp
         </div>
       </div>
 
-      {/* Reading overlay — letter slides up from bottom smoothly */}
+      {/* Reading overlay — letter slides up from bottom (sheet style) */}
       <AnimatePresence>
         {phase === "reading" && (
           <motion.div
-            className="fixed inset-0 z-50 flex items-end justify-center sm:items-center p-0 sm:p-6"
+            className="fixed inset-0 z-50 flex items-end justify-center sm:items-center sm:p-6"
             style={{ background: "rgba(26,25,23,0.45)", backdropFilter: "blur(6px)" }}
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -114,7 +129,7 @@ export default function LetterReveal({ letter: initialLetter }: LetterRevealProp
             onClick={handleClose}
           >
             <motion.div
-              className="relative w-full max-w-md bg-white flex flex-col"
+              className="relative w-full max-w-md bg-white flex flex-col sm:rounded-2xl"
               style={{
                 maxHeight: "88vh",
                 border: "1px solid #E0DCD3",
@@ -132,18 +147,16 @@ export default function LetterReveal({ letter: initialLetter }: LetterRevealProp
                 <div className="w-10 h-1 rounded-full" style={{ background: "#D8D5CE" }} />
               </div>
 
-              <div className="overflow-y-auto px-8 pt-4 pb-6 sm:p-10 flex-1 scrollbar-hide">
+              <div className="overflow-y-auto px-8 pt-4 pb-6 sm:px-10 sm:pt-6 sm:pb-8 flex-1 scrollbar-hide">
                 <p className="font-sans text-xs tracking-widest uppercase mb-4" style={{ color: "var(--text-muted)" }}>
                   Day 500
                 </p>
                 <h2 className="font-serif text-3xl font-light mb-8" style={{ color: "var(--text-primary)" }}>
                   {letter.title}
                 </h2>
-
                 <div className="font-serif text-base whitespace-pre-wrap" style={{ color: "#333", lineHeight: 2.2, letterSpacing: "0.02em" }}>
                   {letter.content}
                 </div>
-
                 <p className="font-serif text-sm text-right mt-12 italic" style={{ color: "var(--text-muted)" }}>
                   — {letter.author}
                 </p>
@@ -169,11 +182,12 @@ export default function LetterReveal({ letter: initialLetter }: LetterRevealProp
                 </div>
               </div>
             </motion.div>
-
-            <AudioPlayer />
           </motion.div>
         )}
       </AnimatePresence>
+
+      {/* Audio player — hidden outside reading overlay, only plays audio */}
+      <AudioPlayer />
 
       <AnimatePresence>
         {isEditing && (
