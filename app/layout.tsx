@@ -2,7 +2,7 @@ import type { Metadata, Viewport } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "우리의 500일 💕",
+  title: "몽콩 ♥",
   description: "소중한 우리의 기억을 담은 사랑 기록 앱",
   keywords: ["500일", "기념일", "사랑", "추억"],
 };
