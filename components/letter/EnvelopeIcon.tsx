@@ -9,71 +9,34 @@ interface EnvelopeIconProps {
 
 export default function EnvelopeIcon({ isOpen, onClick }: EnvelopeIconProps) {
   return (
-    <div
-      className="relative mx-auto cursor-pointer select-none"
-      style={{ width: 140, height: 90 }}
+    <motion.button
       onClick={onClick}
-      role="button"
+      className="relative mx-auto block focus:outline-none cursor-pointer"
+      style={{ width: 140, height: 90 }}
+      whileHover={{ scale: 1.02 }}
+      whileTap={{ scale: 0.98 }}
       aria-label="Open letter"
     >
-      {/* z=1: Envelope interior (back face) */}
+      {/* Shadow */}
+      <div className="absolute inset-0 rounded-md" style={{ boxShadow: "0 4px 12px rgba(0,0,0,0.06)", top: 2 }} />
+
+      {/* Envelope Back (Inside) */}
       <div
-        className="absolute inset-0 rounded-md"
-        style={{
-          background: "var(--bg-card)",
-          border: "1.5px solid var(--border-dark)",
-          zIndex: 1,
-          boxShadow: "0 4px 12px rgba(0,0,0,0.06)",
-        }}
-      />
-
-      {/* z=2: Letter paper — sits inside, rises upward when open */}
-      <motion.div
-        className="absolute rounded-sm overflow-hidden"
-        style={{
-          width: 108,
-          height: 80,
-          left: "50%",
-          bottom: 5,
-          x: "-50%",
-          background: "linear-gradient(to bottom, #FFFDF9, #FAF8F3)",
-          border: "1px solid #DDD9D0",
-          boxShadow: "0 2px 6px rgba(0,0,0,0.07)",
-          zIndex: 2,
-        }}
-        animate={{ y: isOpen ? -88 : 0 }}
-        transition={{
-          duration: 0.65,
-          ease: [0.25, 0.46, 0.45, 0.94],
-          delay: isOpen ? 0.35 : 0,
-        }}
+        className="absolute inset-0 rounded-md overflow-hidden"
+        style={{ background: "var(--bg-card)", border: "1.5px solid var(--border-dark)" }}
       >
-        {/* Ruled lines on letter paper */}
-        {[12, 24, 36, 48, 60].map((top) => (
-          <div
-            key={top}
-            className="absolute left-4 right-4"
-            style={{ top, height: 1, background: "#EAE7DF" }}
-          />
-        ))}
-        <div className="absolute bottom-2 right-3 text-xs" style={{ color: "#C9A0A0" }}>♥</div>
-      </motion.div>
+        <div className="absolute inset-0" style={{ background: "linear-gradient(to bottom, rgba(0,0,0,0.05), transparent)" }} />
+      </div>
 
-      {/* z=3: Envelope BODY FRONT — masks the lower part of the letter (creates "inside" illusion) */}
-      <svg
-        viewBox="0 0 140 90"
-        className="absolute inset-0 w-full h-full pointer-events-none"
-        style={{ zIndex: 3 }}
-      >
-        {/* Lower body covers roughly y=45 to y=90 — masks letter while still inside */}
+      {/* Envelope Front Flaps (Bottom and Sides) */}
+      <svg viewBox="0 0 140 90" className="absolute inset-0 w-full h-full pointer-events-none drop-shadow-sm" style={{ borderRadius: 6 }}>
         <path
-          d="M 0 45 L 70 50 L 140 45 L 140 90 L 0 90 Z"
+          d="M 0 0 L 70 50 L 140 0 L 140 90 L 0 90 Z"
           fill="var(--bg-subtle)"
           stroke="var(--border-dark)"
           strokeWidth="1.5"
           strokeLinejoin="round"
         />
-        {/* Bottom center V fold */}
         <path
           d="M 0 90 L 70 50 L 140 90"
           fill="none"
@@ -83,18 +46,14 @@ export default function EnvelopeIcon({ isOpen, onClick }: EnvelopeIconProps) {
         />
       </svg>
 
-      {/* z=4: Flap lid (top triangle) — rotates open on click */}
+      {/* Flap Lid (Top) */}
       <motion.div
         className="absolute top-0 left-0 right-0"
-        style={{
-          transformStyle: "preserve-3d",
-          transformOrigin: "top center",
-          zIndex: 4,
-        }}
+        style={{ transformStyle: "preserve-3d", transformOrigin: "top center", zIndex: 10 }}
         animate={{ rotateX: isOpen ? -180 : 0 }}
-        transition={{ duration: 0.55, ease: [0.25, 0.46, 0.45, 0.94] }}
+        transition={{ duration: 0.6, ease: [0.25, 0.46, 0.45, 0.94] }}
       >
-        <svg viewBox="0 0 140 50" className="w-full pointer-events-none">
+        <svg viewBox="0 0 140 50" className="w-full pointer-events-none drop-shadow-sm">
           <path
             d="M 0 0 L 70 50 L 140 0 Z"
             fill="var(--bg-card)"
@@ -104,6 +63,6 @@ export default function EnvelopeIcon({ isOpen, onClick }: EnvelopeIconProps) {
           />
         </svg>
       </motion.div>
-    </div>
+    </motion.button>
   );
 }
