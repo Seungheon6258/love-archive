@@ -96,9 +96,9 @@ export default function CategoryCard({
       )}
 
       {/* Content overlay — takes only the left 48% so it doesn't overlap the photo */}
-      <div className="relative z-10 h-full flex items-center px-5" style={{ width: "48%" }}>
-        {/* Centered text block */}
-        <div className="w-full">
+      <div className="relative z-10 h-full flex items-center justify-center px-4" style={{ width: "48%" }}>
+        {/* Text block — centered horizontally and vertically */}
+        <div className="text-center">
           <p
             className={`font-serif text-xl font-medium tracking-tight leading-tight ${
               isSpecial ? "text-gold-shimmer" : ""

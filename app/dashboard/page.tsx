@@ -51,7 +51,11 @@ export default function DashboardPage() {
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
       >
-        {/* Back button — absolute so it doesn't affect centering */}
+        {/* OUR MEMORIES — original top-left position */}
+        <p className="font-sans text-xs tracking-widest uppercase mb-3" style={{ color: "var(--text-muted)" }}>
+          our memories
+        </p>
+        {/* Back button — absolute top-right */}
         <motion.button
           onClick={() => router.push("/")}
           className="absolute top-14 right-5 w-8 h-8 flex items-center justify-center rounded-full"
@@ -61,11 +65,8 @@ export default function DashboardPage() {
         >
           ←
         </motion.button>
-        {/* Centered title */}
+        {/* Title — centered */}
         <div className="text-center">
-          <p className="font-sans text-xs tracking-widest uppercase mb-3" style={{ color: "var(--text-muted)" }}>
-            our memories
-          </p>
           <h1 className="font-serif text-4xl font-light" style={{ color: "var(--text-primary)", letterSpacing: "-0.5px" }}>
             승헌 ♥ 지원
           </h1>
