@@ -51,57 +51,9 @@ export default function LetterReveal({ letter: initialLetter }: LetterRevealProp
             Day 500
           </p>
 
-          {/*
-            Layered envelope + letter:
-            - outermost div is the bounding box (overflow visible so letter can peek up)
-            - letter paper sits BEHIND envelope at z-index 5
-            - envelope sits at z-index 10 (on top, hiding the letter)
-            - when flap opens, letter animates upward, emerging above envelope body
-          */}
-          <div className="relative flex items-center justify-center" style={{ width: 140, height: 90, marginBottom: 32 }}>
-
-            {/* Letter paper — behind the envelope, rises upward when opening */}
-            <motion.div
-              className="absolute rounded-sm"
-              style={{
-                width: 108,
-                height: 80,
-                background: "linear-gradient(to bottom, #FFFDF9, #FAF8F3)",
-                border: "1px solid #DDD9D0",
-                boxShadow: "0 2px 8px rgba(0,0,0,0.08)",
-                zIndex: 5,
-                bottom: 0,
-                left: "50%",
-                x: "-50%",
-              }}
-              animate={
-                phase === "opening" || phase === "reading"
-                  ? { y: -90, opacity: 1 }
-                  : { y: 0, opacity: 0.6 }
-              }
-              transition={{ duration: 0.7, ease: [0.25, 0.46, 0.45, 0.94] }}
-            >
-              {/* Ruled lines on letter paper */}
-              {[14, 26, 38, 50, 62].map((top) => (
-                <div
-                  key={top}
-                  className="absolute left-3 right-3"
-                  style={{ top, height: 1, background: "#EAE7E0" }}
-                />
-              ))}
-              {/* Small heart stamp */}
-              <div
-                className="absolute bottom-2 right-3 text-xs"
-                style={{ color: "#C9A0A0", fontSize: 10 }}
-              >
-                ♥
-              </div>
-            </motion.div>
-
-            {/* Envelope — on top of letter (z-index 10) */}
-            <div className="absolute bottom-0 left-0 right-0" style={{ zIndex: 10 }}>
-              <EnvelopeIcon isOpen={phase !== "closed"} onClick={handleEnvelopeClick} />
-            </div>
+          {/* Envelope — letter paper is built-in and rises from inside */}
+          <div style={{ marginBottom: 32 }}>
+            <EnvelopeIcon isOpen={phase !== "closed"} onClick={handleEnvelopeClick} />
           </div>
 
           {/* Hint text */}
