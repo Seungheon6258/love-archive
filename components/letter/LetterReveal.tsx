@@ -23,10 +23,11 @@ export default function LetterReveal({ letter: initialLetter }: LetterRevealProp
   const handleEnvelopeClick = () => {
     if (phase !== "closed") return;
     setPhase("opening");
+    // After flap opens + letter rises, show reading overlay
     setTimeout(() => {
       setPhase("reading");
       setAudioPlaying(true);
-    }, 800);
+    }, 1000);
   };
 
   const handleClose = () => {
@@ -39,38 +40,58 @@ export default function LetterReveal({ letter: initialLetter }: LetterRevealProp
 
   return (
     <>
+      {/* Envelope section — centered, no "A letter" label */}
       <div className="mb-6">
         <div
-          className="rounded-2xl p-6 relative overflow-hidden"
+          className="rounded-2xl p-8 flex flex-col items-center relative overflow-hidden"
           style={{ background: "var(--bg-subtle)", border: "1px solid var(--border)" }}
         >
-          <p className="font-sans text-xs tracking-widest uppercase mb-1" style={{ color: "var(--text-muted)" }}>
+          <p className="font-sans text-xs tracking-widest uppercase mb-6" style={{ color: "var(--text-muted)" }}>
             Day 500
           </p>
-          <h2 className="font-serif text-xl font-medium mb-6" style={{ color: "var(--text-primary)" }}>
-            A letter
-          </h2>
 
-          <div className="relative">
-            <EnvelopeIcon isOpen={phase !== "closed"} onClick={handleEnvelopeClick} />
-            
-            {/* Peeking letter during opening phase */}
+          {/* Envelope + rising letter container */}
+          <div className="relative flex items-center justify-center" style={{ height: 120 }}>
+            {/* Letter peeking out of envelope during "opening" phase */}
             <AnimatePresence>
-              {phase === "opening" && (
+              {(phase === "opening") && (
                 <motion.div
-                  className="absolute left-1/2 -translate-x-1/2 w-28 rounded-md"
-                  style={{ height: 60, background: "var(--bg-card)", border: "1px solid var(--border)", top: 10, zIndex: 5 }}
-                  initial={{ y: 20, opacity: 0 }}
-                  animate={{ y: -30, opacity: 1 }}
-                  exit={{ y: 20, opacity: 0 }}
-                  transition={{ duration: 0.5, ease: "easeOut" }}
-                />
+                  className="absolute rounded-sm shadow-md z-10"
+                  style={{
+                    width: 100,
+                    height: 70,
+                    background: "linear-gradient(to bottom, #FFF, #FAF8F5)",
+                    border: "1px solid #E0DCD3",
+                    bottom: 20,
+                    left: "50%",
+                    x: "-50%",
+                  }}
+                  initial={{ y: 0, opacity: 0.7 }}
+                  animate={{ y: -60, opacity: 1 }}
+                  exit={{ y: 0, opacity: 0 }}
+                  transition={{ duration: 0.7, ease: [0.25, 0.46, 0.45, 0.94] }}
+                >
+                  {/* Ruled lines on peeking letter */}
+                  {[18, 30, 42, 54].map((top) => (
+                    <div
+                      key={top}
+                      className="absolute left-4 right-4"
+                      style={{ top, height: 1, background: "#E8E5DF" }}
+                    />
+                  ))}
+                </motion.div>
               )}
             </AnimatePresence>
+
+            {/* Envelope */}
+            <div className="relative z-20">
+              <EnvelopeIcon isOpen={phase !== "closed"} onClick={handleEnvelopeClick} />
+            </div>
           </div>
 
+          {/* Hint text */}
           <motion.p
-            className="font-sans text-xs text-center mt-6"
+            className="font-sans text-xs text-center mt-5"
             style={{ color: "var(--text-muted)" }}
             animate={phase === "closed" ? { opacity: [0.4, 0.9, 0.4] } : { opacity: 0 }}
             transition={{ duration: 2.5, repeat: phase === "closed" ? Infinity : 0 }}
@@ -80,57 +101,67 @@ export default function LetterReveal({ letter: initialLetter }: LetterRevealProp
         </div>
       </div>
 
-      {/* Reading overlay (Letter pops out to center) */}
+      {/* Reading overlay — letter slides up from bottom smoothly */}
       <AnimatePresence>
         {phase === "reading" && (
           <motion.div
-            className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6"
-            style={{ background: "rgba(26,25,23,0.4)", backdropFilter: "blur(4px)" }}
+            className="fixed inset-0 z-50 flex items-end justify-center sm:items-center p-0 sm:p-6"
+            style={{ background: "rgba(26,25,23,0.45)", backdropFilter: "blur(6px)" }}
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            transition={{ duration: 0.4 }}
+            transition={{ duration: 0.35 }}
             onClick={handleClose}
           >
             <motion.div
-              className="relative w-full max-w-md bg-white rounded-sm shadow-2xl flex flex-col"
-              style={{ maxHeight: "85vh", border: "1px solid #E0DCD3", backgroundImage: "linear-gradient(to bottom, #FFF, #FAF8F5)" }}
-              initial={{ y: 200, scale: 0.8, opacity: 0 }}
-              animate={{ y: 0, scale: 1, opacity: 1 }}
-              exit={{ y: 150, scale: 0.8, opacity: 0 }}
-              transition={{ type: "spring", stiffness: 300, damping: 28 }}
+              className="relative w-full max-w-md bg-white flex flex-col"
+              style={{
+                maxHeight: "88vh",
+                border: "1px solid #E0DCD3",
+                backgroundImage: "linear-gradient(to bottom, #FFF, #FAF8F5)",
+                borderRadius: "20px 20px 0 0",
+              }}
+              initial={{ y: "100%" }}
+              animate={{ y: 0 }}
+              exit={{ y: "100%" }}
+              transition={{ type: "spring", stiffness: 280, damping: 30, mass: 0.9 }}
               onClick={(e) => e.stopPropagation()}
             >
-              <div className="overflow-y-auto p-8 sm:p-10 flex-1 scrollbar-hide">
+              {/* Drag handle */}
+              <div className="flex justify-center pt-3 pb-1">
+                <div className="w-10 h-1 rounded-full" style={{ background: "#D8D5CE" }} />
+              </div>
+
+              <div className="overflow-y-auto px-8 pt-4 pb-6 sm:p-10 flex-1 scrollbar-hide">
                 <p className="font-sans text-xs tracking-widest uppercase mb-4" style={{ color: "var(--text-muted)" }}>
                   Day 500
                 </p>
                 <h2 className="font-serif text-3xl font-light mb-8" style={{ color: "var(--text-primary)" }}>
                   {letter.title}
                 </h2>
-                
+
                 <div className="font-serif text-base whitespace-pre-wrap" style={{ color: "#333", lineHeight: 2.2, letterSpacing: "0.02em" }}>
                   {letter.content}
                 </div>
-                
+
                 <p className="font-serif text-sm text-right mt-12 italic" style={{ color: "var(--text-muted)" }}>
                   — {letter.author}
                 </p>
               </div>
 
-              {/* Action bar attached to letter bottom */}
-              <div className="p-4 border-t" style={{ borderColor: "#F0EFE9", background: "rgba(255,255,255,0.8)" }}>
+              {/* Action bar */}
+              <div className="px-4 pb-6 pt-3 border-t" style={{ borderColor: "#F0EFE9", background: "rgba(255,255,255,0.9)" }}>
                 <div className="flex gap-3">
                   <button
                     onClick={() => setIsEditing(true)}
-                    className="flex-1 py-2.5 rounded-lg font-sans text-sm transition-colors hover:bg-gray-50"
+                    className="flex-1 py-2.5 rounded-xl font-sans text-sm transition-colors hover:bg-gray-50"
                     style={{ border: "1px solid var(--border)", color: "var(--text-secondary)" }}
                   >
                     Edit
                   </button>
                   <button
                     onClick={handleClose}
-                    className="flex-1 py-2.5 rounded-lg font-sans text-sm text-white transition-opacity hover:opacity-90"
+                    className="flex-1 py-2.5 rounded-xl font-sans text-sm text-white transition-opacity hover:opacity-90"
                     style={{ background: "#2B2A27" }}
                   >
                     Fold

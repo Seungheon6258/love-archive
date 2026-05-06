@@ -55,21 +55,23 @@ export default function DashboardPage() {
         <p className="font-sans text-xs tracking-widest uppercase mb-3" style={{ color: "var(--text-muted)" }}>
           our memories
         </p>
-        {/* Back button — absolute top-right */}
-        <motion.button
-          onClick={() => router.push("/")}
-          className="absolute top-14 right-5 w-8 h-8 flex items-center justify-center rounded-full"
-          style={{ border: "1px solid var(--border)", color: "var(--text-muted)" }}
-          whileTap={{ scale: 0.9 }}
-          aria-label="인트로로"
-        >
-          ←
-        </motion.button>
         {/* Title — centered */}
         <div className="text-center">
           <h1 className="font-serif text-4xl font-light" style={{ color: "var(--text-primary)", letterSpacing: "-0.5px" }}>
             승헌 ♥ 지원
           </h1>
+        </div>
+        {/* Back button — below title, right-aligned, with proper spacing */}
+        <div className="flex justify-end mt-4">
+          <motion.button
+            onClick={() => router.push("/")}
+            className="w-8 h-8 flex items-center justify-center rounded-full"
+            style={{ border: "1px solid var(--border)", color: "var(--text-muted)" }}
+            whileTap={{ scale: 0.9 }}
+            aria-label="인트로로"
+          >
+            ←
+          </motion.button>
         </div>
       </motion.header>
 
